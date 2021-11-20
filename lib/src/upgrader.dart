@@ -197,6 +197,7 @@ class Upgrader {
       }
 
       final appcast = this.appcast ?? Appcast(client: client);
+      this.appcast = appcast;
       await appcast.parseAppcastItemsFromUri(appcastConfig!.url!);
       if (debugLogging) {
         var count = appcast.items == null ? 0 : appcast.items!.length;

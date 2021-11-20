@@ -102,6 +102,7 @@ class Appcast {
         String? newVersion;
         String? itemVersion;
         String? enclosureVersion;
+        String? sha256;
 
         itemElement.children.forEach((XmlNode childNode) {
           if (childNode is XmlElement) {
@@ -121,6 +122,9 @@ class Appcast {
                 } else if (attribute.name.toString() ==
                     AppcastConstants.AttributeURL) {
                   fileURL = attribute.value;
+                } else if (attribute.name.toString() ==
+                    AppcastConstants.AttributeSHA256) {
+                  sha256 = attribute.value;
                 }
               });
             } else if (name == AppcastConstants.ElementMaximumSystemVersion) {
@@ -166,6 +170,7 @@ class Appcast {
           tags: tags,
           fileURL: fileURL,
           versionString: newVersion,
+          sha256: sha256,
         );
         items.add(item);
       });
@@ -213,6 +218,7 @@ class AppcastItem {
   final String? displayVersionString;
   final String? infoURL;
   final List<String>? tags;
+  final String? sha256;
 
   AppcastItem({
     this.title,
@@ -228,6 +234,7 @@ class AppcastItem {
     this.displayVersionString,
     this.infoURL,
     this.tags,
+    this.sha256,
   });
 
   /// Returns true if the tags ([AppcastConstants.ElementTags]) contains
@@ -277,6 +284,7 @@ class AppcastConstants {
   static const String AttributeDeltaFrom = 'sparkle:deltaFrom';
   static const String AttributeDSASignature = 'sparkle:dsaSignature';
   static const String AttributeEDSignature = 'sparkle:edSignature';
+  static const String AttributeSHA256 = 'sparkle:sha256';
   static const String AttributeShortVersionString =
       'sparkle:shortVersionString';
   static const String AttributeVersion = 'sparkle:version';
