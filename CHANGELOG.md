@@ -1,3 +1,28 @@
+## 3.12.1
+
+* Removed the use of dart:io from the package to allow for compatibility on web.
+Added use of pacakge os_detect instead. Testing still uses dart:io.
+
+## 3.12.0
+
+* Updated to device_info_plus.
+* Changed from using pedantic to flutter_lints. Now using the rules from
+flutter_lints/flutter.yaml.
+* Now using const instead of final on many variables.
+* Resolved linting issues. Used typed over untyped uninitialized variables.
+
+## 3.11.1
+
+* Fixed exception while running in the browser. Added example support for web.
+
+## 3.11.0
+
+* Added new language translations for Greek ('el').
+
+## 3.10.0
+
+* Added new language translations for Lithuanian ('lt').
+
 ## 3.9.0
 
 * Added support for minimum app version in the app store description field. See

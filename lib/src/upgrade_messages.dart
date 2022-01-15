@@ -106,6 +106,10 @@ class UpgraderMessages {
         message =
             '{{appName}} এর একটি নতুন সংস্করণ {{currentAppStoreVersion}} পাওয়া যাচ্ছে। আপনার অ্যাপলিকেশনের সংস্করণ হচ্ছে {{currentInstalledVersion}}।';
         break;
+      case 'el':
+        message =
+            'Μια νέα έκδοση του {{appName}} είναι διαθέσιμη! Η έκδοση {{currentAppStoreVersion}} είναι διαθέσιμη-έχετε την {{currentInstalledVersion}}.';
+        break;
       case 'es':
         message =
             '¡Una nueva versión de {{appName}} está disponible! La versión {{currentAppStoreVersion}} ya está disponible-usted tiene {{currentInstalledVersion}}.';
@@ -145,6 +149,10 @@ class UpgraderMessages {
       case 'ko':
         message =
             '{{appName}}이 새 버전으로 업데이트되었습니다! 최신 버전 {{currentAppStoreVersion}}으로 업그레이드 가능합니다 - 현재 버전 {{currentInstalledVersion}}.';
+        break;
+      case 'lt':
+        message =
+            'Išleista nauja programos {{appName}} versija! Versija {{currentAppStoreVersion}} yra prieinama, jūs turite {{currentInstalledVersion}}.';
         break;
       case 'nb':
         message =
@@ -199,6 +207,9 @@ class UpgraderMessages {
       case 'bn':
         message = 'বাতিল';
         break;
+      case 'el':
+        message = 'ΑΓΝΟΗΣTΕ';
+        break;
       case 'es':
         message = 'IGNORAR';
         break;
@@ -228,6 +239,9 @@ class UpgraderMessages {
         break;
       case 'ko':
         message = '무시';
+        break;
+      case 'lt':
+        message = 'IGNORUOTI';
         break;
       case 'nb':
         message = 'IGNORER';
@@ -273,6 +287,9 @@ class UpgraderMessages {
       case 'bn':
         message = 'পরে';
         break;
+      case 'el':
+        message = 'ΑΡΓΟΤΕΡΑ';
+        break;
       case 'es':
         message = 'MÁS TARDE';
         break;
@@ -302,6 +319,9 @@ class UpgraderMessages {
         break;
       case 'ko':
         message = '나중에';
+        break;
+      case 'lt':
+        message = 'ATNAUJINTI VĖLIAU';
         break;
       case 'nb':
         message = 'SENERE';
@@ -347,6 +367,9 @@ class UpgraderMessages {
       case 'bn':
         message = 'এখন আপডেট করুন';
         break;
+      case 'el':
+        message = 'ΕΝΗΜΕΡΩΣΗ';
+        break;
       case 'es':
         message = 'ACTUALIZAR';
         break;
@@ -376,6 +399,9 @@ class UpgraderMessages {
         break;
       case 'ko':
         message = '지금 업데이트';
+        break;
+      case 'lt':
+        message = 'ATNAUJINTI DABAR';
         break;
       case 'nb':
         message = 'OPPDATER NÅ';
@@ -421,6 +447,9 @@ class UpgraderMessages {
       case 'bn':
         message = 'আপনি কি এখনই এটি আপডেট করতে চান?';
         break;
+      case 'el':
+        message = 'Θέλετε να κάνετε την ενημέρωση τώρα;';
+        break;
       case 'es':
         message = '¿Le gustaría actualizar ahora?';
         break;
@@ -450,6 +479,9 @@ class UpgraderMessages {
         break;
       case 'ko':
         message = '지금 업데이트를 시작하시겠습니까?';
+        break;
+      case 'lt':
+        message = 'Ar norite atnaujinti dabar?';
         break;
       case 'nb':
         message = 'Ønsker du å oppdatere nå?';
@@ -495,6 +527,9 @@ class UpgraderMessages {
       case 'bn':
         message = 'আপডেট অ্যাপ্লিকেশন?';
         break;
+      case 'el':
+        message = 'Ενημέρωση εφαρμογής;';
+        break;
       case 'es':
         message = '¿Actualizar la aplicación?';
         break;
@@ -524,6 +559,9 @@ class UpgraderMessages {
         break;
       case 'ko':
         message = '앱을 업데이트하시겠습니까?';
+        break;
+      case 'lt':
+        message = 'Atnaujinti programą?';
         break;
       case 'nb':
         message = 'Oppdater app?';

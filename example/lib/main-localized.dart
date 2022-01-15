@@ -34,11 +34,13 @@ class Demo extends StatelessWidget {
         const Locale('fil', ''), // Filipino, no country code
         const Locale('fr', ''), // French, no country code
         const Locale('de', ''), // German, no country code
+        const Locale('el', ''), // Greek, no country code
         const Locale('hu', ''), // Hungarian, no country code
         const Locale('id', ''), // Indonesian, no country code
         const Locale('it', ''), // Italian, no country code
         const Locale('kk', ''), // Kazakh, no country code
         const Locale('ko', ''), // Korean, no country code
+        const Locale('lt', ''), // Lithuanian, no country code
         const Locale('nb', ''), // Norwegian, no country code
         const Locale('pt', ''), // Portuguese, no country code
         const Locale('pl', ''), // Polish, no country code
@@ -122,11 +124,13 @@ class DemoLocalizationsDelegate
         'fil',
         'fr',
         'de',
+        'el',
         'hu',
         'id',
         'it',
         'kk',
         'ko',
+        'lt',
         'nb',
         'pt',
         'pl',
