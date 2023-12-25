@@ -1,9 +1,8 @@
 /*
- * Copyright (c) 2021 Larry Aasen. All rights reserved.
+ * Copyright (c) 2021-2023 Larry Aasen. All rights reserved.
  */
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:upgrader/upgrader.dart';
 
 /// A widget to display the upgrade card.
@@ -14,155 +13,139 @@ class UpgradeCard extends UpgradeBase {
   /// `EdgeInsets.all(4.0)`.
   final EdgeInsetsGeometry margin;
 
-  UpgradeCard({
-    this.margin = const EdgeInsets.all(4.0),
-    Key? key,
-    AppcastConfiguration? appcastConfig,
-    UpgraderMessages? messages,
-    bool? debugAlwaysUpgrade,
-    bool? debugDisplayOnce,
-    bool? debugLogging,
-    Duration? durationToAlertAgain,
-    BoolCallback? onIgnore,
-    BoolCallback? onLater,
-    BoolCallback? onUpdate,
-    http.Client? client,
-    bool? showIgnore,
-    bool? showLater,
-    bool? showReleaseNotes,
-    String? countryCode,
-    String? minAppVersion,
-  }) : super(
-          key: key,
-          appcastConfig: appcastConfig,
-          messages: messages,
-          debugDisplayAlways: debugAlwaysUpgrade,
-          debugDisplayOnce: debugDisplayOnce,
-          debugLogging: debugLogging,
-          durationToAlertAgain: durationToAlertAgain,
-          onIgnore: onIgnore,
-          onLater: onLater,
-          onUpdate: onUpdate,
-          client: client,
-          showIgnore: showIgnore,
-          showLater: showLater,
-          showReleaseNotes: showReleaseNotes,
-          countryCode: countryCode,
-          minAppVersion: minAppVersion,
-        );
+  /// An optional maximum number of lines for the text to span, wrapping if necessary.
+  final int? maxLines;
 
+  /// How visual overflow should be handled.
+  final TextOverflow? overflow;
+
+  /// Creates a new [UpgradeCard].
+  UpgradeCard({
+    super.key,
+    Upgrader? upgrader,
+    this.margin = const EdgeInsets.all(4.0),
+    this.maxLines = 15,
+    this.overflow = TextOverflow.ellipsis,
+  }) : super(upgrader ?? Upgrader.sharedInstance);
+
+  /// Describes the part of the user interface represented by this widget.
   @override
   Widget build(BuildContext context, UpgradeBaseState state) {
-    if (Upgrader().debugLogging) {
-      print('UpgradeCard: build UpgradeCard');
+    if (upgrader.debugLogging) {
+      print('upgrader: build UpgradeCard');
     }
 
-    return FutureBuilder(
-        future: state.initialized,
-        builder: (BuildContext context, AsyncSnapshot<bool> processed) {
-          if (processed.connectionState == ConnectionState.done &&
-              processed.data != null &&
-              processed.data!) {
-            assert(Upgrader().messages != null);
-            if (Upgrader().shouldDisplayUpgrade()) {
-              final title = Upgrader().messages!.message(UpgraderMessage.title);
-              final message = Upgrader().message();
-              final releaseNotes = Upgrader().releaseNotes;
-              final shouldDisplayReleaseNotes =
-                  Upgrader().shouldDisplayReleaseNotes();
-              if (Upgrader().debugLogging) {
-                print('UpgradeCard: will display');
-                print('UpgradeCard: showDialog title: $title');
-                print('UpgradeCard: showDialog message: $message');
-                print(
-                    'UpgradeCard: shouldDisplayReleaseNotes: $shouldDisplayReleaseNotes');
-
-                print('UpgradeCard: showDialog releaseNotes: $releaseNotes');
-              }
-
-              Widget? notes;
-              if (shouldDisplayReleaseNotes && releaseNotes != null) {
-                notes = Padding(
-                    padding: const EdgeInsets.only(top: 15.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        const Text('Release Notes:',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        Text(
-                          releaseNotes,
-                          maxLines: 15,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ));
-              }
-
-              return Card(
-                  color: Colors.white,
-                  margin: margin,
-                  child: AlertStyleWidget(
-                      title: Text(title ?? ''),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(message),
-                          Padding(
-                              padding: const EdgeInsets.only(top: 15.0),
-                              child: Text(Upgrader()
-                                      .messages!
-                                      .message(UpgraderMessage.prompt) ??
-                                  '')),
-                          if (notes != null) notes,
-                        ],
-                      ),
-                      actions: <Widget>[
-                        if (Upgrader().showIgnore)
-                          TextButton(
-                              child: Text(Upgrader().messages!.message(
-                                      UpgraderMessage.buttonTitleIgnore) ??
-                                  ''),
-                              onPressed: () {
-                                // Save the date/time as the last time alerted.
-                                Upgrader().saveLastAlerted();
-
-                                Upgrader().onUserIgnored(context, false);
-                                state.forceUpdateState();
-                              }),
-                        if (Upgrader().showLater)
-                          TextButton(
-                              child: Text(Upgrader().messages!.message(
-                                      UpgraderMessage.buttonTitleLater) ??
-                                  ''),
-                              onPressed: () {
-                                // Save the date/time as the last time alerted.
-                                Upgrader().saveLastAlerted();
-
-                                Upgrader().onUserLater(context, false);
-                                state.forceUpdateState();
-                              }),
-                        TextButton(
-                            child: Text(Upgrader().messages!.message(
-                                    UpgraderMessage.buttonTitleUpdate) ??
-                                ''),
-                            onPressed: () {
-                              // Save the date/time as the last time alerted.
-                              Upgrader().saveLastAlerted();
-
-                              Upgrader().onUserUpdated(context, false);
-                              state.forceUpdateState();
-                            }),
-                      ]));
+    return StreamBuilder(
+        initialData: state.widget.upgrader.evaluationReady,
+        stream: state.widget.upgrader.evaluationStream,
+        builder: (BuildContext context,
+            AsyncSnapshot<UpgraderEvaluateNeed> snapshot) {
+          if ((snapshot.connectionState == ConnectionState.waiting ||
+                  snapshot.connectionState == ConnectionState.active) &&
+              snapshot.data != null &&
+              snapshot.data!) {
+            if (upgrader.shouldDisplayUpgrade()) {
+              return buildUpgradeCard(context, state);
             } else {
-              if (Upgrader().debugLogging) {
-                print('UpgradeCard: will not display');
+              if (upgrader.debugLogging) {
+                print('upgrader: UpgradeCard will not display');
               }
             }
           }
-          return const SizedBox(width: 0.0, height: 0.0);
+          return const SizedBox.shrink();
         });
+  }
+
+  /// Build the UpgradeCard Widget.
+  Widget buildUpgradeCard(BuildContext context, UpgradeBaseState state) {
+    final appMessages = upgrader.determineMessages(context);
+    final title = appMessages.message(UpgraderMessage.title);
+    final message = upgrader.body(appMessages);
+    final releaseNotes = upgrader.releaseNotes;
+    final shouldDisplayReleaseNotes = upgrader.shouldDisplayReleaseNotes();
+    if (upgrader.debugLogging) {
+      print('upgrader: UpgradeCard: will display');
+      print('upgrader: UpgradeCard: showDialog title: $title');
+      print('upgrader: UpgradeCard: showDialog message: $message');
+      print(
+          'upgrader: UpgradeCard: shouldDisplayReleaseNotes: $shouldDisplayReleaseNotes');
+
+      print('upgrader: UpgradeCard: showDialog releaseNotes: $releaseNotes');
+    }
+
+    Widget? notes;
+    if (shouldDisplayReleaseNotes && releaseNotes != null) {
+      notes = Padding(
+          padding: const EdgeInsets.only(top: 15.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(appMessages.message(UpgraderMessage.releaseNotes) ?? '',
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text(
+                releaseNotes,
+                maxLines: maxLines,
+                overflow: overflow,
+              ),
+            ],
+          ));
+    }
+
+    return Card(
+        color: Colors.white,
+        margin: margin,
+        child: AlertStyleWidget(
+            title: Text(title ?? ''),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(message),
+                Padding(
+                    padding: const EdgeInsets.only(top: 15.0),
+                    child: Text(
+                        appMessages.message(UpgraderMessage.prompt) ?? '')),
+                if (notes != null) notes,
+              ],
+            ),
+            actions: <Widget>[
+              if (upgrader.showIgnore)
+                TextButton(
+                    child: Text(appMessages
+                            .message(UpgraderMessage.buttonTitleIgnore) ??
+                        ''),
+                    onPressed: () {
+                      // Save the date/time as the last time alerted.
+                      upgrader.saveLastAlerted();
+
+                      upgrader.onUserIgnored(context, false);
+                      state.forceUpdateState();
+                    }),
+              if (upgrader.showLater)
+                TextButton(
+                    child: Text(
+                        appMessages.message(UpgraderMessage.buttonTitleLater) ??
+                            ''),
+                    onPressed: () {
+                      // Save the date/time as the last time alerted.
+                      upgrader.saveLastAlerted();
+
+                      upgrader.onUserLater(context, false);
+                      state.forceUpdateState();
+                    }),
+              TextButton(
+                  child: Text(
+                      appMessages.message(UpgraderMessage.buttonTitleUpdate) ??
+                          ''),
+                  onPressed: () {
+                    // Save the date/time as the last time alerted.
+                    upgrader.saveLastAlerted();
+
+                    upgrader.onUserUpdated(context, false);
+                    state.forceUpdateState();
+                  }),
+            ]));
   }
 }

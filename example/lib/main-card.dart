@@ -1,43 +1,56 @@
 /*
- * Copyright (c) 2019 Larry Aasen. All rights reserved.
+ * Copyright (c) 2019-2023 Larry Aasen. All rights reserved.
  */
 
 import 'package:flutter/material.dart';
 import 'package:upgrader/upgrader.dart';
 
-void main() => runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Only call clearSavedSettings() during testing to reset internal values.
+  await Upgrader.clearSavedSettings(); // REMOVE this for release builds
+
+  // On Android, the default behavior will be to use the Google Play Store
+  // version of the app.
+  // On iOS, the default behavior will be to use the App Store version of
+  // the app, so update the Bundle Identifier in example/ios/Runner with a
+  // valid identifier already in the App Store.
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
-  MyApp({
-    Key key,
-  }) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Only call clearSavedSettings() during testing to reset internal values.
-    Upgrader().clearSavedSettings(); // REMOVE this for release builds
-
-    // On Android, setup the Appcast.
-    // On iOS, the default behavior will be to use the App Store version of
-    // the app, so update the Bundle Identifier in example/ios/Runner with a
-    // valid identifier already in the App Store.
-    final appcastURL =
-        'https://raw.githubusercontent.com/larryaasen/upgrader/master/test/testappcast.xml';
-    final cfg = AppcastConfiguration(url: appcastURL, supportedOS: ['android']);
-
     return MaterialApp(
-      title: 'Upgrader Example',
+      title: 'Upgrader Card Example',
       home: Scaffold(
-          appBar: AppBar(
-            title: Text('Upgrader Example'),
+        appBar: AppBar(title: Text('Upgrader Card Example')),
+        body: Container(
+          margin: EdgeInsets.only(left: 12.0, right: 12.0),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                _simpleCard,
+                _simpleCard,
+                UpgradeCard(),
+                _simpleCard,
+                _simpleCard,
+              ],
+            ),
           ),
-          body: Center(
-              child: Container(
-                  margin: EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 0.0),
-                  child: UpgradeCard(
-                    appcastConfig: cfg,
-                    debugLogging: true,
-                  )))),
+        ),
+      ),
     );
   }
+
+  Widget get _simpleCard => Card(
+        child: SizedBox(
+          width: 200,
+          height: 50,
+          child: Center(child: Text('Card')),
+        ),
+      );
 }
